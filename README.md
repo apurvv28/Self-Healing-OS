@@ -6,6 +6,8 @@ AegisOS is an AI-assisted, self-healing Linux operating system framework that au
 
 ## Architecture & Self-Healing Pipeline
 
+![AegisOS System Architecture](./self-healing-os-architecture.png)
+
 ```text
                +----------------------------------+
                | Real-Time Telemetry & Log Ingest |
