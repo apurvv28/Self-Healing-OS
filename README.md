@@ -119,6 +119,20 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
+### 3. Run Automated Live Demo
+
+Launch the end-to-end live demonstration script, which automatically checks baseline status, injects 4 failure scenarios, checks incident audit logs, displays MTTR metrics, and starts the live Web Dashboard server:
+
+**WSL / Ubuntu / Linux:**
+```bash
+bash scripts/run-demo.sh
+```
+
+**Windows (CMD / PowerShell):**
+```cmd
+scripts\run-demo.bat
+```
+
 ---
 
 ## Usage Guide
