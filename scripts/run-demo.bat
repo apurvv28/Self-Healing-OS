@@ -12,7 +12,14 @@ echo.
 IF EXIST ".venv\Scripts\python.exe" (
     SET "PYTHON=.venv\Scripts\python.exe"
 ) ELSE (
-    SET "PYTHON=python"
+    python -m venv .venv
+    SET "PYTHON=.venv\Scripts\python.exe"
+)
+
+%PYTHON% -c "import uvicorn, fastapi, psutil, sklearn" >nul 2>&1
+IF %ERRORLEVEL% NEQ 0 (
+    echo Installing missing dependencies from requirements.txt...
+    %PYTHON% -m pip install -r requirements.txt
 )
 
 echo Using Python Runtime: %PYTHON%
