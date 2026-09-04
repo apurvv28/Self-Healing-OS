@@ -1,0 +1,15 @@
+# Confidence and escalation policies
+# See docs/config-format.md
+
+confidence:
+  escalate_below: 0.70
+  recommend_below: 0.90
+  auto_remediate_at: 0.90
+  min_evidence_count: 2
+
+escalation:
+  max_retries: 3
+  retry_backoff_seconds: 30
+  notify:
+    log: true
+    file: logs/escalations.log

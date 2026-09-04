@@ -1,0 +1,24 @@
+# Approved Kernel Remediation Mappings
+# See Phase 9 specifications in action-plan.md
+
+kernel_remediations:
+  gpu_hang_i915:
+    crash_pattern: "Resetting chip after gpu lockup"
+    approved_action: reload_driver
+    target: i915
+    admin_approved: true
+    rollback_action: escalate
+
+  faulty_test_module:
+    crash_pattern: "my_test_driver_crash"
+    approved_action: blacklist_module
+    target: my_test_driver
+    admin_approved: true
+    rollback_action: remove_blacklist
+
+  kernel_null_pointer_patch:
+    crash_pattern: "unable to handle kernel NULL pointer dereference"
+    approved_action: apply_livepatch
+    target: aegis-patch-001
+    admin_approved: false
+    rollback_action: remove_livepatch

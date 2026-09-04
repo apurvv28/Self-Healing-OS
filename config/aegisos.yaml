@@ -1,0 +1,22 @@
+# AegisOS main configuration
+# See docs/config-format.md for field reference.
+
+aegisos:
+  environment: wsl
+  log_level: INFO
+  log_file: logs/aegisos.log
+
+monitoring:
+  poll_interval_seconds: 10
+  journal_lookback_minutes: 5
+  config_files:
+    thresholds: config/thresholds.yaml
+    confidence: config/confidence-policies.yaml
+    remediation: config/remediation-policies.yaml
+
+database:
+  path: data/aegisos.db
+
+agent:
+  max_concurrent_incidents: 5
+  dedup_window_seconds: 60

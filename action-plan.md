@@ -37,10 +37,12 @@
    - Add `requirements.txt`, `.gitignore`, and a root `README.md` with setup instructions
    - Define coding conventions and logging standards for all Python modules
 
-2. **Provision and configure Ubuntu Linux VM**
-   - Install Ubuntu LTS (22.04 or 24.04) in VirtualBox/VMware with adequate RAM (≥ 4 GB) and disk (≥ 40 GB)
-   - Enable SSH, shared folders or Git sync, and snapshot the clean baseline VM state
-   - Install base packages: `python3`, `pip`, `systemd`, `journald`, `psutil`, build tools
+2. **Provision and configure Linux target environment**
+   - **Primary (recommended):** Use existing WSL2 Ubuntu — run `bash scripts/setup-wsl.sh` from the project root
+   - **Fallback (Phase 8+ only):** AWS EC2 Ubuntu for kdump/kernel crash labs — see `docs/aws-fallback-setup.md`
+   - Verify systemd is enabled (`systemctl is-system-running`), project path accessible at `/mnt/d/...`
+   - Install base packages: `python3`, `pip`, `venv`, build tools; create `.venv` and install `requirements.txt`
+   - Export WSL baseline snapshot: `wsl --export Ubuntu <path>.tar` (optional)
 
 3. **Document system interfaces and monitoring targets**
    - Map data sources: `journalctl`, `systemctl`, `dmesg`, `/proc`, `/sys`
@@ -52,7 +54,7 @@
    - Create YAML/JSON config templates for thresholds, allowed actions, and confidence policies
    - Store schema and config specs in `docs/` for use across all modules
 
-**Deliverable:** A configured Ubuntu VM, initialized repo, and documented schemas ready for monitoring implementation.
+**Deliverable:** A configured WSL2 Ubuntu environment (or AWS EC2 for kernel labs), initialized repo, and documented schemas ready for monitoring implementation. See `docs/environment-setup.md`.
 
 ---
 

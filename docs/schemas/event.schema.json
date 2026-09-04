@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegisos.local/schemas/event.schema.json",
+  "title": "AegisOSEvent",
+  "description": "Normalized incident event emitted by the AegisOS detection engine.",
+  "type": "object",
+  "required": [
+    "event_id",
+    "timestamp",
+    "failure_type",
+    "source",
+    "severity",
+    "raw_evidence"
+  ],
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique identifier for this incident event."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC timestamp when the failure was detected."
+    },
+    "failure_type": {
+      "type": "string",
+      "enum": [
+        "SERVICE_FAILURE",
+        "MEMORY_EXHAUSTION",
+        "CPU_OVERLOAD",
+        "DISK_EXHAUSTION",
+        "KERNEL_ERROR",
+        "DRIVER_FAILURE",
+        "CONFIGURATION_ERROR",
+        "UNKNOWN_FAILURE"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "description": "Originating monitor or subsystem (e.g. journalctl, systemctl, dmesg, resource_monitor)."
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["INFO", "WARNING", "CRITICAL"]
+    },
+    "raw_evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["kind", "data"],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": ["log_line", "metric", "service_state", "process", "file_excerpt"]
+          },
+          "data": {
+            "type": "object",
+            "description": "Source-specific evidence payload."
+          }
+        }
+      }
+    },
+    "affected_unit": {
+      "type": "string",
+      "description": "systemd unit name, if applicable (e.g. nginx.service)."
+    },
+    "affected_process": {
+      "type": "string",
+      "description": "Process name or PID, if applicable."
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

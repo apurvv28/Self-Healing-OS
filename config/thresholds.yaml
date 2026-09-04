@@ -1,0 +1,23 @@
+# Resource monitoring thresholds
+# See docs/config-format.md
+
+thresholds:
+  cpu:
+    warning_percent: 80
+    critical_percent: 90
+    sustained_seconds: 30
+
+  memory:
+    warning_percent: 85
+    critical_percent: 95
+
+  disk:
+    warning_percent: 85
+    critical_percent: 95
+    paths:
+      - /
+      - /tmp
+
+  service:
+    max_restarts: 3
+    restart_window_seconds: 300

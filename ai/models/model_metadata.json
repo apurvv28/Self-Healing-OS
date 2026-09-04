@@ -1,0 +1,72 @@
+{
+  "model_name": "logistic_regression",
+  "macro_f1": 1.0,
+  "classification_report": {
+    "CONFIGURATION_ERROR": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 18.0
+    },
+    "CPU_OVERLOAD": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 18.0
+    },
+    "DISK_EXHAUSTION": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 18.0
+    },
+    "DRIVER_FAILURE": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 18.0
+    },
+    "KERNEL_ERROR": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 18.0
+    },
+    "MEMORY_EXHAUSTION": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 18.0
+    },
+    "SERVICE_FAILURE": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 18.0
+    },
+    "accuracy": 1.0,
+    "macro avg": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 126.0
+    },
+    "weighted avg": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 126.0
+    }
+  },
+  "train_size": 294,
+  "test_size": 126,
+  "classes": [
+    "CONFIGURATION_ERROR",
+    "CPU_OVERLOAD",
+    "DISK_EXHAUSTION",
+    "DRIVER_FAILURE",
+    "KERNEL_ERROR",
+    "MEMORY_EXHAUSTION",
+    "SERVICE_FAILURE"
+  ]
+}

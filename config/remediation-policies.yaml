@@ -1,0 +1,77 @@
+# Remediation policies per failure type
+# See docs/config-format.md
+
+policies:
+  SERVICE_FAILURE:
+    risk_level: LOW
+    allowed_actions:
+      - restart_service
+      - restore_configuration
+    default_action: restart_service
+    auto_remediate: true
+
+  MEMORY_EXHAUSTION:
+    risk_level: MEDIUM
+    allowed_actions:
+      - restart_service
+      - escalate
+    default_action: restart_service
+    auto_remediate: true
+    target_units: []
+
+  CPU_OVERLOAD:
+    risk_level: MEDIUM
+    allowed_actions:
+      - restart_service
+      - escalate
+    default_action: escalate
+    auto_remediate: false
+
+  DISK_EXHAUSTION:
+    risk_level: LOW
+    allowed_actions:
+      - cleanup_temp_files
+      - escalate
+    default_action: cleanup_temp_files
+    auto_remediate: true
+    cleanup_dirs:
+      - /tmp
+      - /var/tmp
+
+  KERNEL_ERROR:
+    risk_level: HIGH
+    allowed_actions:
+      - escalate
+    default_action: escalate
+    auto_remediate: false
+
+  DRIVER_FAILURE:
+    risk_level: HIGH
+    allowed_actions:
+      - blacklist_module
+      - escalate
+    default_action: escalate
+    auto_remediate: false
+
+  CONFIGURATION_ERROR:
+    risk_level: MEDIUM
+    allowed_actions:
+      - restore_configuration
+      - escalate
+    default_action: restore_configuration
+    auto_remediate: true
+
+  UNKNOWN_FAILURE:
+    risk_level: HIGH
+    allowed_actions:
+      - escalate
+    default_action: escalate
+    auto_remediate: false
+
+global:
+  remediation_timeout_seconds: 120
+  require_sudo_whitelist: true
+  sudo_whitelist:
+    - /bin/systemctl restart *
+    - /bin/systemctl start *
+    - /bin/systemctl stop *

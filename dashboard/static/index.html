@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AegisOS — Self-Healing Linux OS Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #0b0f19;
+      --card-bg: rgba(18, 26, 44, 0.75);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --accent-blue: #3b82f6;
+      --accent-cyan: #06b6d4;
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-red: #ef4444;
+      --accent-purple: #8b5cf6;
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.12) 0px, transparent 50%);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-logo {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: #ffffff;
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+    }
+
+    .brand-title h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(to right, #ffffff, #93c5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-title p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      border-radius: 9999px;
+      color: var(--accent-green);
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--accent-green);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--accent-green);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--glass-shadow);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .card-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .card-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .card-subtext {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.4rem;
+    }
+
+    .progress-bar-bg {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 3px;
+      margin-top: 0.75rem;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    .actions-panel {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--glass-shadow);
+    }
+
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      padding: 0.65rem 1.2rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-blue { background: var(--accent-blue); color: #fff; }
+    .btn-blue:hover { background: #2563eb; }
+
+    .btn-amber { background: var(--accent-amber); color: #111827; }
+    .btn-amber:hover { background: #d97706; }
+
+    .btn-red { background: var(--accent-red); color: #fff; }
+    .btn-red:hover { background: #dc2626; }
+
+    .btn-green { background: var(--accent-green); color: #fff; }
+    .btn-green:hover { background: #059669; }
+
+    .table-container {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--glass-shadow);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+      text-align: left;
+    }
+
+    th {
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--card-border);
+    }
+
+    td {
+      padding: 0.9rem 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .badge-critical { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3); }
+    .badge-warning { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.3); }
+    .badge-info { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.3); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="brand">
+      <div class="brand-logo">A</div>
+      <div class="brand-title">
+        <h1>AegisOS</h1>
+        <p>AI-Assisted Self-Healing Linux Operating System</p>
+      </div>
+    </div>
+    <div class="status-pill">
+      <div class="status-dot"></div>
+      <span id="system-status-text">SYSTEM ACTIVE & HEALING</span>
+    </div>
+  </header>
+
+  <!-- System Health Gauges -->
+  <div class="grid">
+    <div class="card">
+      <div class="card-label">CPU Utilization</div>
+      <div class="card-value" id="val-cpu">0%</div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="bar-cpu" style="width: 0%; background: var(--accent-blue);"></div>
+      </div>
+      <div class="card-subtext" id="sub-cpu">16 Cores Active</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Memory Utilization</div>
+      <div class="card-value" id="val-mem">0%</div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="bar-mem" style="width: 0%; background: var(--accent-purple);"></div>
+      </div>
+      <div class="card-subtext" id="sub-mem">RAM Usage</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Disk Storage Usage</div>
+      <div class="card-value" id="val-disk">0%</div>
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="bar-disk" style="width: 0%; background: var(--accent-cyan);"></div>
+      </div>
+      <div class="card-subtext" id="sub-disk">Root Partition (/)</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Remediation Success Rate</div>
+      <div class="card-value" id="val-success" style="color: var(--accent-green);">100%</div>
+      <div class="card-subtext" id="sub-mttr">Avg MTTR: 0.0s</div>
+    </div>
+  </div>
+
+  <!-- Interactive Action Panel -->
+  <div class="actions-panel">
+    <div class="section-title">⚡ Interactive Failure Simulator & Healing Controls</div>
+    <div class="btn-group">
+      <button class="btn btn-amber" onclick="triggerScenario('service_failure')">Simulate Service Crash</button>
+      <button class="btn btn-amber" onclick="triggerScenario('cpu_overload')">Simulate CPU Spike</button>
+      <button class="btn btn-amber" onclick="triggerScenario('memory_exhaustion')">Simulate Memory Pressure</button>
+      <button class="btn btn-amber" onclick="triggerScenario('disk_exhaustion')">Simulate Disk Full</button>
+      <button class="btn btn-red" onclick="triggerScenario('kernel_panic')">Inject Kernel Panic Log</button>
+      <button class="btn btn-green" onclick="runCycle()">▶ Execute Self-Healing Cycle</button>
+    </div>
+  </div>
+
+  <!-- Incidents & Remediation History Table -->
+  <div class="table-container">
+    <div class="section-title">📋 Incidents & Remediation Audit Log</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Timestamp</th>
+          <th>Event ID</th>
+          <th>Failure Type</th>
+          <th>Severity</th>
+          <th>Target Unit / Process</th>
+          <th>Source</th>
+        </tr>
+      </thead>
+      <tbody id="incidents-table-body">
+        <tr>
+          <td colspan="6" style="text-align: center; color: var(--text-muted);">Loading incidents history...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    async function updateDashboard() {
+      try {
+        // 1. Fetch Health
+        const resHealth = await fetch('/api/health');
+        if (resHealth.ok) {
+          const health = await resHealth.json();
+          const metrics = health.system_metrics || {};
+          const cpuPct = metrics.cpu?.total_percent || 0;
+          const memPct = metrics.memory?.used_percent || 0;
+          const diskPct = metrics.disk?.['/']?.percent || 0;
+
+          document.getElementById('val-cpu').innerText = `${cpuPct.toFixed(1)}%`;
+          document.getElementById('bar-cpu').style.width = `${cpuPct}%`;
+
+          document.getElementById('val-mem').innerText = `${memPct.toFixed(1)}%`;
+          document.getElementById('bar-mem').style.width = `${memPct}%`;
+
+          document.getElementById('val-disk').innerText = `${diskPct.toFixed(1)}%`;
+          document.getElementById('bar-disk').style.width = `${diskPct}%`;
+        }
+
+        // 2. Fetch Metrics
+        const resMetrics = await fetch('/api/metrics');
+        if (resMetrics.ok) {
+          const met = await resMetrics.json();
+          const rate = met.remediation_success_rate_pct || 100.0;
+          const mttr = met.average_mttr_seconds || 0.0;
+          document.getElementById('val-success').innerText = `${rate.toFixed(1)}%`;
+          document.getElementById('sub-mttr').innerText = `Avg MTTR: ${mttr.toFixed(2)}s | Total: ${met.total_incidents}`;
+        }
+
+        // 3. Fetch Incidents
+        const resIncidents = await fetch('/api/incidents?limit=10');
+        if (resIncidents.ok) {
+          const incidents = await resIncidents.json();
+          const tbody = document.getElementById('incidents-table-body');
+          if (incidents.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No incidents detected yet. System healthy.</td></tr>`;
+          } else {
+            tbody.innerHTML = incidents.map(item => `
+              <tr>
+                <td>${item.timestamp}</td>
+                <td><code style="color: var(--accent-cyan);">${item.event_id.substring(0, 8)}</code></td>
+                <td><b>${item.failure_type}</b></td>
+                <td><span class="badge badge-${item.severity.toLowerCase()}">${item.severity}</span></td>
+                <td>${item.affected_unit || item.affected_process || '-'}</td>
+                <td>${item.source}</td>
+              </tr>
+            `).join('');
+          }
+        }
+      } catch (err) {
+        console.error('Failed to update dashboard:', err);
+      }
+    }
+
+    async function triggerScenario(type) {
+      try {
+        const res = await fetch(`/api/trigger-scenario?scenario_type=${type}`, { method: 'POST' });
+        if (res.ok) {
+          const data = await res.json();
+          alert(`Scenario '${type}' triggered! Detected ${data.detected_incidents?.length || 0} incident(s).`);
+          updateDashboard();
+        }
+      } catch (err) {
+        alert('Failed to trigger scenario: ' + err);
+      }
+    }
+
+    async function runCycle() {
+      try {
+        const res = await fetch('/api/run-cycle', { method: 'POST' });
+        if (res.ok) {
+          const data = await res.json();
+          alert(`Self-healing cycle completed! Processed ${data.cycle_results?.length || 0} event(s).`);
+          updateDashboard();
+        }
+      } catch (err) {
+        alert('Failed to run self-healing cycle: ' + err);
+      }
+    }
+
+    updateDashboard();
+    setInterval(updateDashboard, 3000);
+  </script>
+</body>
+</html>

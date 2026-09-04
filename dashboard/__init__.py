@@ -1,1 +1,5 @@
-"""Dashboard and API: web UI and REST endpoints for incident visibility."""
+"""AegisOS Dashboard & REST API Layer."""
+
+from dashboard.api import app
+
+__all__ = ["app"]

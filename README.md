@@ -11,6 +11,11 @@ AegisOS is an AI-assisted self-healing Linux operating system prototype that aut
 | [overview.md](./overview.md) | Full project overview, architecture, and features |
 | [action-plan.md](./action-plan.md) | 10-phase implementation plan |
 | [docs/coding-conventions.md](./docs/coding-conventions.md) | Python style and logging standards |
+| [docs/environment-setup.md](./docs/environment-setup.md) | WSL2 setup (primary) and environment comparison |
+| [docs/system-interfaces.md](./docs/system-interfaces.md) | Monitoring targets: journalctl, systemctl, dmesg, /proc, /sys |
+| [docs/event-schema.md](./docs/event-schema.md) | Normalized event and diagnosis schema |
+| [docs/config-format.md](./docs/config-format.md) | YAML configuration reference |
+| [docs/aws-fallback-setup.md](./docs/aws-fallback-setup.md) | AWS EC2 for kdump labs (Phase 8+) |
 
 ## Project Structure
 
@@ -31,9 +36,9 @@ docs/           Documentation
 
 ## Prerequisites
 
-- **Host:** Windows or Linux with VirtualBox or VMware
-- **Target VM:** Ubuntu LTS 22.04 or 24.04 (≥ 4 GB RAM, ≥ 40 GB disk)
-- **Python:** 3.10 or newer (on host for development; on VM for runtime)
+- **Host:** Windows with WSL2 (recommended) or Linux
+- **Target environment:** WSL2 Ubuntu for Phases 1–7 and 10; AWS EC2 for Phase 8 kdump labs only
+- **Python:** 3.10 or newer inside WSL
 
 ## Setup
 
@@ -75,15 +80,22 @@ from common.logging_config import setup_logging
 setup_logging(level="INFO", log_file=Path("logs/aegisos.log"))
 ```
 
-### 5. Prepare the Ubuntu VM
+### 5. Set up WSL2 Ubuntu (primary environment)
 
-See [action-plan.md — Phase 1, Task 2](./action-plan.md) for VM provisioning steps. AegisOS monitoring and remediation run on the Ubuntu target VM.
+From WSL:
+
+```bash
+cd "/mnt/d/VIT/Sem 5/Operating System/Self-Healing-OS"
+bash scripts/setup-wsl.sh
+```
+
+See [docs/environment-setup.md](./docs/environment-setup.md) for full details. For kdump/kernel labs (Phase 8), use [docs/aws-fallback-setup.md](./docs/aws-fallback-setup.md).
 
 ## Development Status
 
 | Phase | Status |
 |-------|--------|
-| 1 — Project Foundation | In progress |
+| 1 — Project Foundation | Complete |
 | 2 — Monitoring Layer | Not started |
 | 3 — Failure Detection | Not started |
 | 4 — AI Classifier | Not started |

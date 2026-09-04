@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://aegisos.local/schemas/diagnosis.schema.json",
+  "title": "AegisOSDiagnosis",
+  "description": "RCA output produced after correlating evidence for an incident.",
+  "type": "object",
+  "required": [
+    "event_id",
+    "failure_type",
+    "probable_root_cause",
+    "evidence",
+    "confidence_score",
+    "recommended_remediation",
+    "risk_level"
+  ],
+  "properties": {
+    "event_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "failure_type": {
+      "type": "string",
+      "enum": [
+        "SERVICE_FAILURE",
+        "MEMORY_EXHAUSTION",
+        "CPU_OVERLOAD",
+        "DISK_EXHAUSTION",
+        "KERNEL_ERROR",
+        "DRIVER_FAILURE",
+        "CONFIGURATION_ERROR",
+        "UNKNOWN_FAILURE"
+      ]
+    },
+    "probable_root_cause": {
+      "type": "string",
+      "description": "Human-readable root cause summary."
+    },
+    "evidence": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "confidence_score": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "recommended_remediation": {
+      "type": "string",
+      "description": "Action key matching remediation-policies.yaml (e.g. restart_service)."
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
+    },
+    "correlated_event_ids": {
+      "type": "array",
+      "items": { "type": "string", "format": "uuid" }
+    }
+  },
+  "additionalProperties": false
+}
