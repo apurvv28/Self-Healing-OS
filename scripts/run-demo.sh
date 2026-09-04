@@ -21,22 +21,60 @@ echo "          AegisOS — Autonomous Self-Healing OS Live Demo          "
 echo "=================================================================="
 echo -e "${RESET}"
 
-# Environment & Python detection
-if [ -f ".venv/bin/python" ]; then
-    PYTHON=".venv/bin/python"
-elif [ -n "${VIRTUAL_ENV:-}" ] && [ -f "$VIRTUAL_ENV/bin/python" ]; then
-    PYTHON="$VIRTUAL_ENV/bin/python"
-else
-    echo -e "${YELLOW}--> Setting up Python virtual environment (.venv)...${RESET}"
-    python3 -m venv .venv || python -m venv .venv
-    PYTHON=".venv/bin/python"
+# Find best Python runtime available in WSL environment
+find_python() {
+    # 1. Existing working .venv
+    if [ -x ".venv/bin/python" ] && .venv/bin/python -c "import sys" >/dev/null 2>&1; then
+        echo ".venv/bin/python"
+        return 0
+    fi
+
+    # 2. Pyenv Python if active
+    if command -v pyenv >/dev/null 2>&1; then
+        local pyenv_py
+        pyenv_py="$(pyenv which python3 2>/dev/null || pyenv which python 2>/dev/null || true)"
+        if [ -n "$pyenv_py" ] && [ -x "$pyenv_py" ]; then
+            echo "$pyenv_py"
+            return 0
+        fi
+    fi
+
+    # 3. Standard candidates
+    for candidate in python3.12 python3 python; do
+        if command -v "$candidate" >/dev/null 2>&1 && "$candidate" -c "import sys" >/dev/null 2>&1; then
+            echo "$candidate"
+            return 0
+        fi
+    done
+
+    echo "python3"
+}
+
+BASE_PYTHON="$(find_python)"
+PYTHON="$BASE_PYTHON"
+
+# Clean incomplete .venv directory if created without a python binary
+if [ -d ".venv" ] && [ ! -x ".venv/bin/python" ]; then
+    rm -rf .venv
 fi
 
-# Verify dependencies and install if missing
+# Ensure required packages exist or install them
 if ! "$PYTHON" -c "import uvicorn, fastapi, psutil, sklearn" >/dev/null 2>&1; then
+    if [ ! -d ".venv" ]; then
+        echo -e "${YELLOW}--> Attempting virtual environment (.venv) creation...${RESET}"
+        if "$BASE_PYTHON" -m venv .venv 2>/dev/null; then
+            PYTHON=".venv/bin/python"
+        else
+            echo -e "${YELLOW}--> System venv creation unavailable without sudo. Using $BASE_PYTHON directly...${RESET}"
+            PYTHON="$BASE_PYTHON"
+        fi
+    elif [ -x ".venv/bin/python" ]; then
+        PYTHON=".venv/bin/python"
+    fi
+
     echo -e "${YELLOW}--> Installing required dependencies from requirements.txt...${RESET}"
-    "$PYTHON" -m pip install --upgrade pip -q
-    "$PYTHON" -m pip install -r requirements.txt
+    "$PYTHON" -m pip install --upgrade pip -q 2>/dev/null || true
+    "$PYTHON" -m pip install -r requirements.txt 2>/dev/null || "$PYTHON" -m pip install -r requirements.txt --user
 fi
 
 echo -e "Using Python Runtime: ${MAGENTA}$PYTHON${RESET}"
