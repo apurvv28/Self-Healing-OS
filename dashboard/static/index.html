@@ -622,6 +622,38 @@
   </div>
 
   <script>
+    let currentPipelineStage = 1;
+    let isAnimatingPipeline = false;
+
+    function setPipelineStage(stageNum) {
+      currentPipelineStage = stageNum;
+      for (let i = 1; i <= 5; i++) {
+        const box = document.getElementById(`step-${i}`);
+        if (box) {
+          if (i <= stageNum) {
+            box.classList.add('active');
+          } else {
+            box.classList.remove('active');
+          }
+        }
+      }
+    }
+
+    function animatePipelineFlow(startStage, endStage, callback) {
+      isAnimatingPipeline = true;
+      let current = startStage;
+      setPipelineStage(current);
+      const interval = setInterval(() => {
+        current++;
+        setPipelineStage(current);
+        if (current >= endStage) {
+          clearInterval(interval);
+          isAnimatingPipeline = false;
+          if (callback) callback();
+        }
+      }, 500);
+    }
+
     async function updateDashboard() {
       try {
         // 1. Fetch System Telemetry & Health
@@ -640,11 +672,16 @@
             document.getElementById('badge-cpu').innerText = 'CRITICAL';
             document.getElementById('badge-cpu').className = 'metric-status-badge badge-alert';
             document.getElementById('bar-cpu').style.background = 'var(--accent-red)';
-            setPipelineStage(2); // Highlight Failure Detection Stage
+            if (!isAnimatingPipeline && currentPipelineStage < 2) {
+              setPipelineStage(2); // High CPU detected
+            }
           } else {
             document.getElementById('badge-cpu').innerText = 'NORMAL';
             document.getElementById('badge-cpu').className = 'metric-status-badge badge-normal';
             document.getElementById('bar-cpu').style.background = 'var(--accent-blue)';
+            if (!isAnimatingPipeline) {
+              setPipelineStage(1); // Normal Ingestion Baseline
+            }
           }
 
           // Memory UI
@@ -718,44 +755,31 @@
       }
     }
 
-    function setPipelineStage(stageNum) {
-      for (let i = 1; i <= 5; i++) {
-        const box = document.getElementById(`step-${i}`);
-        if (box) {
-          if (i <= stageNum) {
-            box.classList.add('active');
-          } else {
-            box.classList.remove('active');
-          }
-        }
-      }
-    }
-
     async function triggerScenario(type) {
-      setPipelineStage(3); // Highlight AI Triage Stage
-      try {
-        const res = await fetch(`/api/trigger-scenario?scenario_type=${type}`, { method: 'POST' });
-        if (res.ok) {
-          const data = await res.json();
-          setPipelineStage(5); // Highlight Recovery Completed
-          updateDashboard();
+      animatePipelineFlow(1, 5, async () => {
+        try {
+          const res = await fetch(`/api/trigger-scenario?scenario_type=${type}`, { method: 'POST' });
+          if (res.ok) {
+            await fetch('/api/run-cycle', { method: 'POST' });
+            updateDashboard();
+          }
+        } catch (err) {
+          console.error('Failed to trigger scenario:', err);
         }
-      } catch (err) {
-        console.error('Failed to trigger scenario:', err);
-      }
+      });
     }
 
     async function runCycle() {
-      setPipelineStage(4); // Highlight RCA & Remediation
-      try {
-        const res = await fetch('/api/run-cycle', { method: 'POST' });
-        if (res.ok) {
-          setPipelineStage(5); // Highlight Recovery Completed
-          updateDashboard();
+      animatePipelineFlow(2, 5, async () => {
+        try {
+          const res = await fetch('/api/run-cycle', { method: 'POST' });
+          if (res.ok) {
+            updateDashboard();
+          }
+        } catch (err) {
+          console.error('Failed to execute self-healing cycle:', err);
         }
-      } catch (err) {
-        console.error('Failed to execute self-healing cycle:', err);
-      }
+      });
     }
 
     // Auto refresh telemetry every 2 seconds
