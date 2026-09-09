@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import logging
+import threading
+import time
 from pathlib import Path
 from typing import Any
 
@@ -49,6 +51,21 @@ audit_logger = RemediationAuditLogger()
 remediation_engine = RemediationEngine(audit_logger=audit_logger)
 metrics_tracker = MetricsTracker()
 healing_loop = SelfHealingLoop()
+
+
+# Start continuous autonomous self-healing background worker
+def _autonomous_background_worker() -> None:
+    logger.info("Starting AegisOS Autonomous Self-Healing Background Thread (2s poll interval)...")
+    while True:
+        try:
+            healing_loop.run_cycle(operator="auto")
+        except Exception as exc:
+            logger.debug("Autonomous background loop cycle exception: %s", exc)
+        time.sleep(2)
+
+
+bg_thread = threading.Thread(target=_autonomous_background_worker, daemon=True)
+bg_thread.start()
 
 
 @app.get("/", response_class=HTMLResponse)

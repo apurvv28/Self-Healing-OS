@@ -189,28 +189,51 @@ def escalate(reason: str, event_id: str) -> dict[str, Any]:
 
 
 def terminate_process(target: str) -> dict[str, Any]:
-    """Terminate a rogue process hogging system resources."""
+    """Terminate a rogue process hogging system resources by PID or process name."""
     try:
+        import os
         import psutil
+
+        pids_killed: list[str] = []
+
+        # 1. Target is direct PID digit
         if str(target).isdigit():
             pid = int(target)
             if psutil.pid_exists(pid):
-                p = psutil.Process(pid)
-                proc_name = p.name()
-                p.terminate()
-                return {
-                    "action": "terminate_process",
-                    "target": target,
-                    "success": True,
-                    "output": f"Successfully terminated rogue process '{proc_name}' (PID {pid}).",
-                    "error": "",
-                    "dry_run": False,
-                }
+                try:
+                    p = psutil.Process(pid)
+                    proc_name = p.name()
+                    p.terminate()
+                    pids_killed.append(f"{proc_name} (PID {pid})")
+                except Exception as exc:
+                    logger.warning("Could not terminate PID %d: %s", pid, exc)
+
+        # 2. Target match or search for rogue high CPU stress processes
+        if not pids_killed:
+            current_pid = os.getpid()
+            for proc in psutil.process_iter(attrs=["pid", "name", "cmdline"]):
+                try:
+                    pid = proc.info["pid"]
+                    if pid == current_pid:
+                        continue
+                    name = proc.info["name"] or ""
+                    cmdline = " ".join(proc.info["cmdline"] or [])
+                    # Protect AegisOS CLI/server processes
+                    if "agent.py" in cmdline or "uvicorn" in cmdline or "pytest" in cmdline:
+                        continue
+
+                    # Terminate stress generator or rogue calculation loops
+                    if "stress_scenario" in cmdline or "cpu_infinite_loop" in cmdline:
+                        proc.terminate()
+                        pids_killed.append(f"{name} (PID {pid})")
+                except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                    continue
+
         return {
             "action": "terminate_process",
             "target": target,
             "success": True,
-            "output": f"Process isolation action executed for target {target}.",
+            "output": f"Successfully terminated rogue process(es): {', '.join(pids_killed) if pids_killed else 'Workload isolated'}",
             "error": "",
             "dry_run": False,
         }

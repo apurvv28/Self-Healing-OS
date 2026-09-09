@@ -7,7 +7,7 @@ aegisos:
   log_file: logs/aegisos.log
 
 monitoring:
-  poll_interval_seconds: 10
+  poll_interval_seconds: 2
   journal_lookback_minutes: 5
   config_files:
     thresholds: config/thresholds.yaml

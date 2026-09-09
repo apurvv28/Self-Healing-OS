@@ -22,11 +22,11 @@ policies:
   CPU_OVERLOAD:
     risk_level: MEDIUM
     allowed_actions:
-      - apply_safe_sysctl
       - terminate_process
+      - apply_safe_sysctl
       - restart_service
       - escalate
-    default_action: apply_safe_sysctl
+    default_action: terminate_process
     auto_remediate: true
 
   DISK_EXHAUSTION:

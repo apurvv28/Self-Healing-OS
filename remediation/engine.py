@@ -143,6 +143,13 @@ class RemediationEngine:
             cleanup_dirs = policy.get("cleanup_dirs", ["/tmp", "/var/tmp"])
             return ", ".join(cleanup_dirs)
 
+        if action_name == "terminate_process":
+            import re
+            for ev in diagnosis.evidence:
+                match = re.search(r'\bpid\s*[:=]?\s*(\d+)\b', ev, re.IGNORECASE)
+                if match:
+                    return match.group(1)
+
         return diagnosis.event_id
 
     def _dispatch_action(
