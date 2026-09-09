@@ -174,7 +174,7 @@ def main() -> None:
 
     # Command: serve
     p_serve = subparsers.add_parser("serve", help="Start FastAPI REST server and web dashboard")
-    p_serve.add_argument("--host", default="127.0.0.1", help="Host address")
+    p_serve.add_argument("--host", default="0.0.0.0", help="Host address (default: 0.0.0.0)")
     p_serve.add_argument("--port", type=int, default=8000, help="Port number")
 
     # Command: daemon
