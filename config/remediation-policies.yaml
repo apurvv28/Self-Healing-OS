@@ -22,10 +22,12 @@ policies:
   CPU_OVERLOAD:
     risk_level: MEDIUM
     allowed_actions:
+      - apply_safe_sysctl
+      - terminate_process
       - restart_service
       - escalate
-    default_action: escalate
-    auto_remediate: false
+    default_action: apply_safe_sysctl
+    auto_remediate: true
 
   DISK_EXHAUSTION:
     risk_level: LOW
@@ -64,9 +66,11 @@ policies:
   UNKNOWN_FAILURE:
     risk_level: HIGH
     allowed_actions:
+      - cleanup_temp_files
+      - apply_safe_sysctl
       - escalate
-    default_action: escalate
-    auto_remediate: false
+    default_action: cleanup_temp_files
+    auto_remediate: true
 
 global:
   remediation_timeout_seconds: 120

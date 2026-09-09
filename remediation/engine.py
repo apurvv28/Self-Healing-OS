@@ -17,6 +17,7 @@ from remediation.actions import (
     escalate,
     restart_service,
     restore_configuration,
+    terminate_process,
 )
 from remediation.audit import RemediationAuditLogger
 from remediation.kernel_actions import (
@@ -165,6 +166,9 @@ class RemediationEngine:
         if action_name == "apply_safe_sysctl":
             params = policy.get("sysctl_params", {"vm.swappiness": "10"})
             return apply_safe_sysctl(params)
+
+        if action_name == "terminate_process":
+            return terminate_process(target=target)
 
         if action_name == "blacklist_module":
             return blacklist_module(module_name=target)
