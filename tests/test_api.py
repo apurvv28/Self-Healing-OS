@@ -48,3 +48,19 @@ def test_run_cycle_endpoint():
     assert response.status_code == 200
     data = response.json()
     assert "processed_count" in data
+
+
+def test_log_stream_endpoint():
+    response = client.get("/api/logs/stream?limit=10")
+    assert response.status_code == 200
+    data = response.json()
+    assert isinstance(data, list)
+
+
+def test_rca_graph_endpoint():
+    response = client.get("/api/rca/latest")
+    assert response.status_code == 200
+    data = response.json()
+    assert "nodes" in data
+    assert "edges" in data
+

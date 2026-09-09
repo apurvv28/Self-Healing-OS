@@ -135,7 +135,26 @@ bash scripts/run-demo.sh
 scripts\run-demo.bat
 ```
 
+### 4. AWS EC2 Live Demonstration Guide (`t3.micro`)
+
+Deploy AegisOS to an AWS EC2 Linux instance with a single command and demonstrate real-time self-healing during real system stress (infinite CPU loops, memory leaks, disk full):
+
+```bash
+# 1. On your EC2 Ubuntu/Debian instance, run the quickstart setup:
+bash scripts/setup-ec2.sh
+
+# 2. Open Web Dashboard in browser:
+# http://<YOUR-EC2-PUBLIC-IP>:8000
+
+# 3. In a separate EC2 SSH terminal, trigger real CPU infinite loop stress:
+python scripts/stress_scenario.py --mode cpu --duration 30
+
+# 4. Or trigger memory leak / disk fill stress:
+python scripts/stress_scenario.py --mode memory --duration 20
+```
+
 ---
+
 
 ## Usage Guide
 

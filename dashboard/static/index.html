@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AegisOS — Self-Healing Linux OS Dashboard</title>
+  <title>AegisOS — Self-Healing Linux OS Control Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-dark: #0b0f19;
@@ -44,7 +44,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       padding-bottom: 1rem;
       border-bottom: 1px solid var(--card-border);
     }
@@ -56,8 +56,8 @@
     }
 
     .brand-logo {
-      width: 42px;
-      height: 42px;
+      width: 46px;
+      height: 46px;
       background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
       border-radius: 12px;
       display: flex;
@@ -65,14 +65,14 @@
       justify-content: center;
       font-family: 'Outfit', sans-serif;
       font-weight: 800;
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       color: #ffffff;
       box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
     }
 
     .brand-title h1 {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.75rem;
+      font-size: 1.85rem;
       font-weight: 700;
       letter-spacing: -0.5px;
       background: linear-gradient(to right, #ffffff, #93c5fd);
@@ -89,7 +89,7 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.5rem 1rem;
+      padding: 0.5rem 1.2rem;
       background: rgba(16, 185, 129, 0.15);
       border: 1px solid rgba(16, 185, 129, 0.3);
       border-radius: 9999px;
@@ -112,11 +112,40 @@
       50% { opacity: 0.5; transform: scale(1.2); }
     }
 
+    .ec2-banner {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: 12px;
+      padding: 0.85rem 1.25rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+
+    .ec2-banner-title {
+      font-weight: 600;
+      color: #93c5fd;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .ec2-cmd {
+      font-family: 'Fira Code', monospace;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      color: var(--accent-cyan);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 1.5rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
     }
 
     .card {
@@ -173,7 +202,7 @@
       border: 1px solid var(--card-border);
       border-radius: 16px;
       padding: 1.5rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       box-shadow: var(--glass-shadow);
     }
 
@@ -218,6 +247,121 @@
     .btn-green { background: var(--accent-green); color: #fff; }
     .btn-green:hover { background: #059669; }
 
+    /* RCA Graph Visualizer */
+    .rca-visualizer-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--glass-shadow);
+    }
+
+    .rca-flow-nodes {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .rca-node {
+      flex: 1;
+      min-width: 160px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+      position: relative;
+      transition: transform 0.2s ease;
+    }
+
+    .rca-node:hover {
+      transform: translateY(-3px);
+    }
+
+    .rca-node-danger { border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.08); }
+    .rca-node-warning { border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.08); }
+    .rca-node-info { border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.08); }
+    .rca-node-success { border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.08); }
+    .rca-node-healthy { border-color: rgba(139, 92, 246, 0.4); background: rgba(139, 92, 246, 0.08); }
+
+    .rca-node-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .rca-node-sub {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .rca-arrow {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+    }
+
+    /* Live Streaming Terminal */
+    .terminal-card {
+      background: #060911;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--glass-shadow);
+      font-family: 'Fira Code', monospace;
+    }
+
+    .terminal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.85rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 6px;
+    }
+
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .dot-red { background-color: #ff5f56; }
+    .dot-yellow { background-color: #ffbd2e; }
+    .dot-green { background-color: #27c93f; }
+
+    .terminal-body {
+      height: 200px;
+      overflow-y: auto;
+      font-size: 0.82rem;
+      line-height: 1.6;
+    }
+
+    .term-line {
+      margin-bottom: 0.4rem;
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .term-ts { color: var(--text-muted); }
+    .term-mod { color: var(--accent-cyan); font-weight: 600; }
+    .term-msg { color: #e5e7eb; }
+    .term-warn { color: var(--accent-amber); }
+    .term-success { color: var(--accent-green); }
+
+    /* Tables */
     .table-container {
       background: var(--card-bg);
       backdrop-filter: blur(12px);
@@ -280,6 +424,17 @@
     </div>
   </header>
 
+  <!-- AWS EC2 Demonstration Notice -->
+  <div class="ec2-banner">
+    <div class="ec2-banner-title">
+      ⚡ <span>AWS EC2 Demonstration Mode Active</span>
+    </div>
+    <div>
+      <span>To trigger CPU stress on EC2 terminal: </span>
+      <span class="ec2-cmd">python scripts/stress_scenario.py --mode cpu --duration 30</span>
+    </div>
+  </div>
+
   <!-- System Health Gauges -->
   <div class="grid">
     <div class="card">
@@ -288,7 +443,7 @@
       <div class="progress-bar-bg">
         <div class="progress-bar-fill" id="bar-cpu" style="width: 0%; background: var(--accent-blue);"></div>
       </div>
-      <div class="card-subtext" id="sub-cpu">16 Cores Active</div>
+      <div class="card-subtext" id="sub-cpu">Active Core Telemetry</div>
     </div>
 
     <div class="card">
@@ -329,7 +484,38 @@
     </div>
   </div>
 
-  <!-- Incidents & Remediation History Table -->
+  <!-- Interactive RCA Visualizer Chain -->
+  <div class="rca-visualizer-card">
+    <div class="section-title">🔗 Root-Cause Analysis (RCA) & Remediation Chain</div>
+    <div class="rca-flow-nodes" id="rca-nodes-container">
+      <div class="rca-node rca-node-healthy">
+        <div class="rca-node-title">System Baseline</div>
+        <div class="rca-node-sub">All Services Healthy</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Streaming Terminal Console -->
+  <div class="terminal-card">
+    <div class="terminal-header">
+      <div class="terminal-dots">
+        <div class="terminal-dot dot-red"></div>
+        <div class="terminal-dot dot-yellow"></div>
+        <div class="terminal-dot dot-green"></div>
+      </div>
+      <div>AegisOS Live Autonomous Event Console</div>
+      <div>STDIO / SSE Stream</div>
+    </div>
+    <div class="terminal-body" id="terminal-body">
+      <div class="term-line">
+        <span class="term-ts">[SYSTEM]</span>
+        <span class="term-mod">CORE</span>
+        <span class="term-msg">AegisOS live monitoring & self-healing daemon initialized.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Incidents & Remediation Audit Log Table -->
   <div class="table-container">
     <div class="section-title">📋 Incidents & Remediation Audit Log</div>
     <table>
@@ -403,6 +589,39 @@
             `).join('');
           }
         }
+
+        // 4. Fetch Live Log Stream
+        const resLogs = await fetch('/api/logs/stream?limit=15');
+        if (resLogs.ok) {
+          const logs = await resLogs.json();
+          const term = document.getElementById('terminal-body');
+          if (logs.length > 0) {
+            term.innerHTML = logs.map(l => {
+              const cls = l.level === 'WARN' ? 'term-warn' : (l.level === 'SUCCESS' ? 'term-success' : 'term-msg');
+              return `<div class="term-line">
+                <span class="term-ts">[${l.timestamp ? l.timestamp.substring(11, 19) : '00:00:00'}]</span>
+                <span class="term-mod">${l.module}</span>
+                <span="${cls}">${l.message}</span>
+              </div>`;
+            }).join('');
+          }
+        }
+
+        // 5. Fetch RCA Graph Chain
+        const resRCA = await fetch('/api/rca/latest');
+        if (resRCA.ok) {
+          const rcaData = await resRCA.json();
+          const container = document.getElementById('rca-nodes-container');
+          if (rcaData.nodes && rcaData.nodes.length > 0) {
+            container.innerHTML = rcaData.nodes.map((n, i) => `
+              <div class="rca-node rca-node-${n.status}">
+                <div class="rca-node-title">${n.label}</div>
+                <div class="rca-node-sub">${n.sub || ''}</div>
+              </div>
+              ${i < rcaData.nodes.length - 1 ? '<div class="rca-arrow">➔</div>' : ''}
+            `).join('');
+          }
+        }
       } catch (err) {
         console.error('Failed to update dashboard:', err);
       }
@@ -413,11 +632,10 @@
         const res = await fetch(`/api/trigger-scenario?scenario_type=${type}`, { method: 'POST' });
         if (res.ok) {
           const data = await res.json();
-          alert(`Scenario '${type}' triggered! Detected ${data.detected_incidents?.length || 0} incident(s).`);
           updateDashboard();
         }
       } catch (err) {
-        alert('Failed to trigger scenario: ' + err);
+        console.error('Failed to trigger scenario:', err);
       }
     }
 
@@ -425,17 +643,15 @@
       try {
         const res = await fetch('/api/run-cycle', { method: 'POST' });
         if (res.ok) {
-          const data = await res.json();
-          alert(`Self-healing cycle completed! Processed ${data.cycle_results?.length || 0} event(s).`);
           updateDashboard();
         }
       } catch (err) {
-        alert('Failed to run self-healing cycle: ' + err);
+        console.error('Failed to run self-healing cycle:', err);
       }
     }
 
     updateDashboard();
-    setInterval(updateDashboard, 3000);
+    setInterval(updateDashboard, 2000);
   </script>
 </body>
 </html>
