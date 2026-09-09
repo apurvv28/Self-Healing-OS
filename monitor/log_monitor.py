@@ -87,7 +87,7 @@ class LogMonitor:
                 check=False,
             )
             if res.returncode != 0:
-                logger.warning("dmesg returned code %d: %s", res.returncode, res.stderr.strip())
+                logger.debug("dmesg returned code %d: %s", res.returncode, res.stderr.strip())
                 return []
 
             lines = res.stdout.splitlines()[-max_lines:]

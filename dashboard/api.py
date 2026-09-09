@@ -147,24 +147,51 @@ def get_latest_rca_graph() -> dict[str, Any]:
 
     latest = incidents[0]
     event_id = latest.get("event_id")
-    event_obj = storage.get_incident_by_id(event_id)
 
     # Perform diagnosis if RCA details exist
     diagnosis = None
-    if event_obj:
+    try:
+        from common.events import AegisEvent, FailureType, Severity
+        f_type_val = latest.get("failure_type", "UNKNOWN_FAILURE")
         try:
-            # Reconstruct event for RCA engine
-            from common.events import SystemFailureEvent
-            system_event = SystemFailureEvent.from_dict(event_obj)
-            diagnosis = rca_engine.diagnose(system_event)
-        except Exception as exc:
-            logger.warning("RCA graph diagnosis generation failed: %s", exc)
+            f_type = FailureType(f_type_val)
+        except ValueError:
+            f_type = FailureType.UNKNOWN_FAILURE
+
+        sev_val = latest.get("severity", "WARNING")
+        try:
+            sev = Severity(sev_val)
+        except ValueError:
+            sev = Severity.WARNING
+
+        raw_ev = latest.get("raw_evidence") or [
+            {"kind": "metric", "timestamp": latest.get("timestamp"), "metric_name": "status", "value": 1.0}
+        ]
+
+        system_event = AegisEvent(
+            event_id=event_id,
+            timestamp=latest.get("timestamp"),
+            failure_type=f_type,
+            source=latest.get("source", "detector"),
+            severity=sev,
+            raw_evidence=raw_ev,
+            affected_unit=latest.get("affected_unit"),
+            affected_process=latest.get("affected_process"),
+        )
+        diagnosis_obj = rca_engine.diagnose(system_event)
+        diagnosis = diagnosis_obj.to_dict()
+    except Exception as exc:
+        logger.warning("RCA graph diagnosis generation failed: %s", exc)
 
     # Fetch remediation if available
     rem_list = audit_logger.get_audit_history(limit=1, event_id=event_id)
     rem_action = rem_list[0] if rem_list else None
 
     # Construct graph structure for visualization
+    root_cause_label = diagnosis.get("probable_root_cause", "Root Cause Analysis") if diagnosis else "Root Cause Analysis"
+    if len(root_cause_label) > 40:
+        root_cause_label = root_cause_label[:37] + "..."
+
     nodes = [
         {
             "id": "node-telemetry",
@@ -180,7 +207,7 @@ def get_latest_rca_graph() -> dict[str, Any]:
         },
         {
             "id": "node-rca",
-            "label": diagnosis.get("root_cause", "Root Cause Analysis") if diagnosis else "Root Cause Analysis",
+            "label": root_cause_label,
             "sub": f"Target: {latest.get('affected_unit') or latest.get('affected_process') or 'Kernel/OS'}",
             "status": "info",
         },
