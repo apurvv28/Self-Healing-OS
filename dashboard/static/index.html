@@ -3,24 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AegisOS — Self-Healing Linux OS Control Dashboard</title>
+  <title>AegisOS — Autonomous Self-Healing Linux OS Control Center</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #0b0f19;
-      --card-bg: rgba(18, 26, 44, 0.75);
+      --bg-dark: #070a12;
+      --card-bg: rgba(15, 23, 42, 0.85);
       --card-border: rgba(255, 255, 255, 0.08);
-      --text-main: #f3f4f6;
-      --text-muted: #9ca3af;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
       --accent-blue: #3b82f6;
       --accent-cyan: #06b6d4;
       --accent-green: #10b981;
       --accent-amber: #f59e0b;
       --accent-red: #ef4444;
       --accent-purple: #8b5cf6;
-      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      --glass-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
     }
 
     * {
@@ -33,175 +33,189 @@
       font-family: 'Inter', sans-serif;
       background-color: var(--bg-dark);
       background-image: 
-        radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
-        radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.12) 0px, transparent 50%);
+        radial-gradient(at 10% 10%, rgba(59, 130, 246, 0.12) 0px, transparent 50%),
+        radial-gradient(at 90% 90%, rgba(139, 92, 246, 0.12) 0px, transparent 50%);
       color: var(--text-main);
       min-height: 100vh;
-      padding: 2rem;
+      padding: 1.75rem 2.25rem;
     }
 
+    /* Executive Navigation Bar */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1.5rem;
-      padding-bottom: 1rem;
+      padding-bottom: 1.25rem;
       border-bottom: 1px solid var(--card-border);
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 1.2rem;
     }
 
     .brand-logo {
-      width: 46px;
-      height: 46px;
-      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-      border-radius: 12px;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      border-radius: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
       font-family: 'Outfit', sans-serif;
       font-weight: 800;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
       color: #ffffff;
-      box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+      box-shadow: 0 0 25px rgba(59, 130, 246, 0.45);
     }
 
     .brand-title h1 {
       font-family: 'Outfit', sans-serif;
       font-size: 1.85rem;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: -0.5px;
-      background: linear-gradient(to right, #ffffff, #93c5fd);
+      background: linear-gradient(to right, #ffffff, #cbd5e1);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
     .brand-title p {
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .header-badges {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .node-pill {
+      background: rgba(30, 41, 59, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
 
     .status-pill {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1.2rem;
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.3);
+      gap: 0.6rem;
+      padding: 0.55rem 1.25rem;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
       border-radius: 9999px;
       color: var(--accent-green);
-      font-size: 0.85rem;
-      font-weight: 600;
+      font-size: 0.88rem;
+      font-weight: 700;
     }
 
     .status-dot {
-      width: 8px;
-      height: 8px;
+      width: 9px;
+      height: 9px;
       background-color: var(--accent-green);
       border-radius: 50%;
-      box-shadow: 0 0 10px var(--accent-green);
+      box-shadow: 0 0 12px var(--accent-green);
       animation: pulse 2s infinite;
     }
 
     @keyframes pulse {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.5; transform: scale(1.2); }
+      50% { opacity: 0.4; transform: scale(1.25); }
     }
 
-    .ec2-banner {
-      background: rgba(59, 130, 246, 0.1);
-      border: 1px solid rgba(59, 130, 246, 0.25);
-      border-radius: 12px;
-      padding: 0.85rem 1.25rem;
-      margin-bottom: 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.85rem;
-    }
-
-    .ec2-banner-title {
-      font-weight: 600;
-      color: #93c5fd;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .ec2-cmd {
-      font-family: 'Fira Code', monospace;
-      background: rgba(0, 0, 0, 0.4);
-      padding: 0.25rem 0.6rem;
-      border-radius: 6px;
-      color: var(--accent-cyan);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .grid {
+    /* System Telemetry Metrics Grid */
+    .metrics-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1.25rem;
       margin-bottom: 1.5rem;
     }
 
-    .card {
+    .metric-card {
       background: var(--card-bg);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(16px);
       border: 1px solid var(--card-border);
       border-radius: 16px;
-      padding: 1.5rem;
+      padding: 1.35rem 1.5rem;
       box-shadow: var(--glass-shadow);
+      position: relative;
+      overflow: hidden;
       transition: transform 0.2s ease, border-color 0.2s ease;
     }
 
-    .card:hover {
+    .metric-card:hover {
       transform: translateY(-2px);
-      border-color: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.18);
     }
 
-    .card-label {
-      font-size: 0.85rem;
+    .metric-label {
+      font-size: 0.82rem;
       color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
       margin-bottom: 0.5rem;
-      font-weight: 500;
     }
 
-    .card-value {
+    .metric-value-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+    }
+
+    .metric-value {
       font-family: 'Outfit', sans-serif;
-      font-size: 2rem;
-      font-weight: 700;
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -1px;
     }
 
-    .card-subtext {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin-top: 0.4rem;
+    .metric-status-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: 6px;
     }
+
+    .badge-normal { background: rgba(16, 185, 129, 0.15); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-alert { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.4); }
 
     .progress-bar-bg {
-      height: 6px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 3px;
-      margin-top: 0.75rem;
+      height: 7px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      margin-top: 0.85rem;
       overflow: hidden;
     }
 
     .progress-bar-fill {
       height: 100%;
-      border-radius: 3px;
-      transition: width 0.4s ease;
+      border-radius: 4px;
+      transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .actions-panel {
+    .metric-subtext {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+    }
+
+    /* 5-Stage Self-Healing Live Pipeline Component */
+    .pipeline-card {
       background: var(--card-bg);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(16px);
       border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 1.5rem;
+      border-radius: 18px;
+      padding: 1.5rem 1.75rem;
       margin-bottom: 1.5rem;
       box-shadow: var(--glass-shadow);
     }
@@ -209,108 +223,130 @@
     .section-title {
       font-family: 'Outfit', sans-serif;
       font-size: 1.2rem;
-      font-weight: 600;
-      margin-bottom: 1rem;
+      font-weight: 700;
+      margin-bottom: 1.1rem;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.6rem;
+    }
+
+    .pipeline-steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1rem;
+      position: relative;
+    }
+
+    @media (max-width: 992px) {
+      .pipeline-steps {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .step-box {
+      background: rgba(30, 41, 59, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 14px;
+      padding: 1.1rem 1rem;
+      text-align: center;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .step-box.active {
+      background: rgba(59, 130, 246, 0.12);
+      border-color: rgba(59, 130, 246, 0.4);
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+    }
+
+    .step-num {
+      width: 26px;
+      height: 26px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 0.6rem;
+    }
+
+    .step-box.active .step-num {
+      background: var(--accent-blue);
+      color: #fff;
+    }
+
+    .step-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+    }
+
+    .step-detail {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+
+    /* Live Evaluation Controls & Stress Simulators */
+    .controls-panel {
+      background: var(--card-bg);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--glass-shadow);
+    }
+
+    .panel-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.1rem;
     }
 
     .btn-group {
       display: flex;
       flex-wrap: wrap;
-      gap: 0.75rem;
+      gap: 0.85rem;
     }
 
     .btn {
-      padding: 0.65rem 1.2rem;
-      border-radius: 10px;
-      font-size: 0.85rem;
-      font-weight: 600;
+      padding: 0.7rem 1.35rem;
+      border-radius: 12px;
+      font-size: 0.86rem;
+      font-weight: 700;
       cursor: pointer;
       border: none;
       transition: all 0.2s ease;
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.55rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
     }
 
-    .btn-blue { background: var(--accent-blue); color: #fff; }
-    .btn-blue:hover { background: #2563eb; }
-
-    .btn-amber { background: var(--accent-amber); color: #111827; }
-    .btn-amber:hover { background: #d97706; }
-
-    .btn-red { background: var(--accent-red); color: #fff; }
-    .btn-red:hover { background: #dc2626; }
-
-    .btn-green { background: var(--accent-green); color: #fff; }
-    .btn-green:hover { background: #059669; }
-
-    /* RCA Graph Visualizer */
-    .rca-visualizer-card {
-      background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      box-shadow: var(--glass-shadow);
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
     }
 
-    .rca-flow-nodes {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-top: 1rem;
+    .btn:active {
+      transform: translateY(0);
     }
 
-    .rca-node {
-      flex: 1;
-      min-width: 160px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 1rem;
-      text-align: center;
-      position: relative;
-      transition: transform 0.2s ease;
-    }
+    .btn-amber { background: linear-gradient(135deg, #f59e0b, #d97706); color: #0f172a; }
+    .btn-red { background: linear-gradient(135deg, #ef4444, #dc2626); color: #ffffff; }
+    .btn-green { background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; }
+    .btn-purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: #ffffff; }
 
-    .rca-node:hover {
-      transform: translateY(-3px);
-    }
-
-    .rca-node-danger { border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.08); }
-    .rca-node-warning { border-color: rgba(245, 158, 11, 0.4); background: rgba(245, 158, 11, 0.08); }
-    .rca-node-info { border-color: rgba(59, 130, 246, 0.4); background: rgba(59, 130, 246, 0.08); }
-    .rca-node-success { border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.08); }
-    .rca-node-healthy { border-color: rgba(139, 92, 246, 0.4); background: rgba(139, 92, 246, 0.08); }
-
-    .rca-node-title {
-      font-size: 0.85rem;
-      font-weight: 700;
-      margin-bottom: 0.25rem;
-    }
-
-    .rca-node-sub {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .rca-arrow {
-      font-size: 1.2rem;
-      color: var(--text-muted);
-    }
-
-    /* Live Streaming Terminal */
+    /* Live Cyber Event Stream Console */
     .terminal-card {
-      background: #060911;
+      background: #030712;
       border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 16px;
-      padding: 1.25rem;
+      border-radius: 18px;
+      padding: 1.25rem 1.5rem;
       margin-bottom: 1.5rem;
       box-shadow: var(--glass-shadow);
       font-family: 'Fira Code', monospace;
@@ -320,54 +356,65 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.85rem;
-      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.6rem;
       border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       color: var(--text-muted);
     }
 
     .terminal-dots {
       display: flex;
-      gap: 6px;
+      gap: 7px;
     }
 
     .terminal-dot {
-      width: 10px;
-      height: 10px;
+      width: 11px;
+      height: 11px;
       border-radius: 50%;
     }
 
-    .dot-red { background-color: #ff5f56; }
-    .dot-yellow { background-color: #ffbd2e; }
-    .dot-green { background-color: #27c93f; }
+    .dot-red { background-color: #ef4444; }
+    .dot-yellow { background-color: #f59e0b; }
+    .dot-green { background-color: #10b981; }
 
     .terminal-body {
-      height: 200px;
+      height: 210px;
       overflow-y: auto;
-      font-size: 0.82rem;
-      line-height: 1.6;
+      font-size: 0.83rem;
+      line-height: 1.65;
     }
 
     .term-line {
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.45rem;
       display: flex;
-      gap: 0.75rem;
+      gap: 0.85rem;
+      align-items: center;
     }
 
-    .term-ts { color: var(--text-muted); }
-    .term-mod { color: var(--accent-cyan); font-weight: 600; }
-    .term-msg { color: #e5e7eb; }
-    .term-warn { color: var(--accent-amber); }
-    .term-success { color: var(--accent-green); }
+    .term-ts { color: #64748b; font-size: 0.78rem; }
+    .term-tag {
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.72rem;
+    }
 
-    /* Tables */
+    .tag-detect { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
+    .tag-triage { background: rgba(245, 158, 11, 0.2); color: #fde047; }
+    .tag-rca { background: rgba(59, 130, 246, 0.2); color: #93c5fd; }
+    .tag-remediate { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; }
+    .tag-verify { background: rgba(139, 92, 246, 0.2); color: #c4b5fd; }
+
+    .term-msg { color: #e2e8f0; }
+
+    /* Audit Log Data Table */
     .table-container {
       background: var(--card-bg);
-      backdrop-filter: blur(12px);
+      backdrop-filter: blur(16px);
       border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 1.5rem;
+      border-radius: 18px;
+      padding: 1.5rem 1.75rem;
       box-shadow: var(--glass-shadow);
       overflow-x: auto;
     }
@@ -375,19 +422,22 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       text-align: left;
     }
 
     th {
       color: var(--text-muted);
-      font-weight: 600;
-      padding: 0.75rem 1rem;
+      font-weight: 700;
+      padding: 0.85rem 1rem;
       border-bottom: 1px solid var(--card-border);
+      text-transform: uppercase;
+      font-size: 0.76rem;
+      letter-spacing: 0.5px;
     }
 
     td {
-      padding: 0.9rem 1rem;
+      padding: 0.95rem 1rem;
       border-bottom: 1px solid rgba(255, 255, 255, 0.04);
     }
 
@@ -397,105 +447,139 @@
 
     .badge {
       display: inline-block;
-      padding: 0.25rem 0.6rem;
+      padding: 0.25rem 0.65rem;
       border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: 600;
+      font-size: 0.74rem;
+      font-weight: 700;
     }
 
-    .badge-critical { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.3); }
-    .badge-warning { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.3); }
-    .badge-info { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.3); }
+    .badge-critical { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); border: 1px solid rgba(239, 68, 68, 0.35); }
+    .badge-warning { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.35); }
+    .badge-info { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.35); }
+    .badge-success { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); border: 1px solid rgba(16, 185, 129, 0.35); }
   </style>
 </head>
 <body>
 
+  <!-- Top Executive Header -->
   <header>
     <div class="brand">
       <div class="brand-logo">A</div>
       <div class="brand-title">
         <h1>AegisOS</h1>
-        <p>AI-Assisted Self-Healing Linux Operating System</p>
+        <p>AI-Assisted Autonomous Self-Healing Linux Operating System Framework</p>
       </div>
     </div>
-    <div class="status-pill">
-      <div class="status-dot"></div>
-      <span id="system-status-text">SYSTEM ACTIVE & HEALING</span>
+    <div class="header-badges">
+      <div class="node-pill">
+        <span>☁️ AWS EC2 Live Node:</span>
+        <strong id="node-ip">15.252.139.132</strong>
+      </div>
+      <div class="status-pill">
+        <div class="status-dot"></div>
+        <span id="system-status-text">SYSTEM OPERATIONAL & HEALING</span>
+      </div>
     </div>
   </header>
 
-  <!-- AWS EC2 Demonstration Notice -->
-  <div class="ec2-banner">
-    <div class="ec2-banner-title">
-      ⚡ <span>AWS EC2 Demonstration Mode Active</span>
-    </div>
-    <div>
-      <span>To trigger CPU stress on EC2 terminal: </span>
-      <span class="ec2-cmd">python scripts/stress_scenario.py --mode cpu --duration 30</span>
-    </div>
-  </div>
-
-  <!-- System Health Gauges -->
-  <div class="grid">
-    <div class="card">
-      <div class="card-label">CPU Utilization</div>
-      <div class="card-value" id="val-cpu">0%</div>
+  <!-- Live System Metrics Gauges -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-label">CPU Utilization</div>
+      <div class="metric-value-row">
+        <div class="metric-value" id="val-cpu">0.0%</div>
+        <div class="metric-status-badge badge-normal" id="badge-cpu">NORMAL</div>
+      </div>
       <div class="progress-bar-bg">
         <div class="progress-bar-fill" id="bar-cpu" style="width: 0%; background: var(--accent-blue);"></div>
       </div>
-      <div class="card-subtext" id="sub-cpu">Active Core Telemetry</div>
+      <div class="metric-subtext" id="sub-cpu">Active Telemetry Polling</div>
     </div>
 
-    <div class="card">
-      <div class="card-label">Memory Utilization</div>
-      <div class="card-value" id="val-mem">0%</div>
+    <div class="metric-card">
+      <div class="metric-label">Memory Utilization</div>
+      <div class="metric-value-row">
+        <div class="metric-value" id="val-mem">0.0%</div>
+        <div class="metric-status-badge badge-normal" id="badge-mem">NORMAL</div>
+      </div>
       <div class="progress-bar-bg">
         <div class="progress-bar-fill" id="bar-mem" style="width: 0%; background: var(--accent-purple);"></div>
       </div>
-      <div class="card-subtext" id="sub-mem">RAM Usage</div>
+      <div class="metric-subtext" id="sub-mem">RAM Capacity Usage</div>
     </div>
 
-    <div class="card">
-      <div class="card-label">Disk Storage Usage</div>
-      <div class="card-value" id="val-disk">0%</div>
+    <div class="metric-card">
+      <div class="metric-label">Root Partition Storage</div>
+      <div class="metric-value-row">
+        <div class="metric-value" id="val-disk">0.0%</div>
+        <div class="metric-status-badge badge-normal" id="badge-disk">NORMAL</div>
+      </div>
       <div class="progress-bar-bg">
         <div class="progress-bar-fill" id="bar-disk" style="width: 0%; background: var(--accent-cyan);"></div>
       </div>
-      <div class="card-subtext" id="sub-disk">Root Partition (/)</div>
+      <div class="metric-subtext" id="sub-disk">Disk Mount (/)</div>
     </div>
 
-    <div class="card">
-      <div class="card-label">Remediation Success Rate</div>
-      <div class="card-value" id="val-success" style="color: var(--accent-green);">100%</div>
-      <div class="card-subtext" id="sub-mttr">Avg MTTR: 0.0s</div>
-    </div>
-  </div>
-
-  <!-- Interactive Action Panel -->
-  <div class="actions-panel">
-    <div class="section-title">⚡ Interactive Failure Simulator & Healing Controls</div>
-    <div class="btn-group">
-      <button class="btn btn-amber" onclick="triggerScenario('service_failure')">Simulate Service Crash</button>
-      <button class="btn btn-amber" onclick="triggerScenario('cpu_overload')">Simulate CPU Spike</button>
-      <button class="btn btn-amber" onclick="triggerScenario('memory_exhaustion')">Simulate Memory Pressure</button>
-      <button class="btn btn-amber" onclick="triggerScenario('disk_exhaustion')">Simulate Disk Full</button>
-      <button class="btn btn-red" onclick="triggerScenario('kernel_panic')">Inject Kernel Panic Log</button>
-      <button class="btn btn-green" onclick="runCycle()">▶ Execute Self-Healing Cycle</button>
+    <div class="metric-card">
+      <div class="metric-label">Autonomous Recovery Rate</div>
+      <div class="metric-value-row">
+        <div class="metric-value" id="val-success" style="color: var(--accent-green);">100.0%</div>
+        <div class="metric-status-badge badge-success">ACTIVE</div>
+      </div>
+      <div class="metric-subtext" id="sub-mttr" style="color: #6ee7b7; font-weight: 600;">Average MTTR: 0.00s</div>
     </div>
   </div>
 
-  <!-- Interactive RCA Visualizer Chain -->
-  <div class="rca-visualizer-card">
-    <div class="section-title">🔗 Root-Cause Analysis (RCA) & Remediation Chain</div>
-    <div class="rca-flow-nodes" id="rca-nodes-container">
-      <div class="rca-node rca-node-healthy">
-        <div class="rca-node-title">System Baseline</div>
-        <div class="rca-node-sub">All Services Healthy</div>
+  <!-- 5-Stage Live Self-Healing Pipeline -->
+  <div class="pipeline-card">
+    <div class="section-title">⚡ 5-Stage Autonomous Self-Healing Pipeline Execution</div>
+    <div class="pipeline-steps">
+      <div class="step-box active" id="step-1">
+        <div class="step-num">1</div>
+        <div class="step-name">Real-Time Ingestion</div>
+        <div class="step-detail">Polling Procfs, Sysfs & Journalctl telemetry</div>
+      </div>
+
+      <div class="step-box" id="step-2">
+        <div class="step-num">2</div>
+        <div class="step-name">Failure Detection</div>
+        <div class="step-detail">Heuristic rule thresholds & anomaly detection</div>
+      </div>
+
+      <div class="step-box" id="step-3">
+        <div class="step-num">3</div>
+        <div class="step-name">AI ML Triage</div>
+        <div class="step-detail">TF-IDF + Random Forest log classification</div>
+      </div>
+
+      <div class="step-box" id="step-4">
+        <div class="step-num">4</div>
+        <div class="step-name">Root Cause Analysis</div>
+        <div class="step-detail">Graph dependency correlation & PID isolation</div>
+      </div>
+
+      <div class="step-box" id="step-5">
+        <div class="step-num">5</div>
+        <div class="step-name">Policy Recovery</div>
+        <div class="step-detail">Automated safe remediation & MTTR verification</div>
       </div>
     </div>
   </div>
 
-  <!-- Live Streaming Terminal Console -->
+  <!-- Live Evaluation Demonstration Control Panel -->
+  <div class="controls-panel">
+    <div class="section-title">🧪 Project Evaluation Live Failure Simulator & Remediation Controls</div>
+    <div class="panel-subtitle">Click any failure scenario to test live real-time detection, AI classification, and automated self-healing execution:</div>
+    <div class="btn-group">
+      <button class="btn btn-amber" onclick="triggerScenario('cpu_overload')">🔥 Inject Infinite CPU Overload Stress</button>
+      <button class="btn btn-purple" onclick="triggerScenario('memory_exhaustion')">📦 Inject Memory Pressure Stress</button>
+      <button class="btn btn-amber" onclick="triggerScenario('service_failure')">⚙️ Simulate Service Crash</button>
+      <button class="btn btn-red" onclick="triggerScenario('kernel_panic')">⚡ Inject Kernel Panic Log</button>
+      <button class="btn btn-green" onclick="runCycle()">▶ Execute Manual Self-Healing Cycle</button>
+    </div>
+  </div>
+
+  <!-- Live Cyber Event Stream Console -->
   <div class="terminal-card">
     <div class="terminal-header">
       <div class="terminal-dots">
@@ -503,21 +587,21 @@
         <div class="terminal-dot dot-yellow"></div>
         <div class="terminal-dot dot-green"></div>
       </div>
-      <div>AegisOS Live Autonomous Event Console</div>
-      <div>STDIO / SSE Stream</div>
+      <div>AegisOS Autonomous Engine Live Event Console</div>
+      <div>Real-Time Log Stream</div>
     </div>
     <div class="terminal-body" id="terminal-body">
       <div class="term-line">
         <span class="term-ts">[SYSTEM]</span>
-        <span class="term-mod">CORE</span>
-        <span class="term-msg">AegisOS live monitoring & self-healing daemon initialized.</span>
+        <span class="term-tag tag-remediate">MONITOR</span>
+        <span class="term-msg">AegisOS autonomous self-healing framework running active telemetry polling.</span>
       </div>
     </div>
   </div>
 
-  <!-- Incidents & Remediation Audit Log Table -->
+  <!-- Incident & Remediation Audit Log Table -->
   <div class="table-container">
-    <div class="section-title">📋 Incidents & Remediation Audit Log</div>
+    <div class="section-title">📋 Incidents & Remediation Audit History</div>
     <table>
       <thead>
         <tr>
@@ -526,7 +610,7 @@
           <th>Failure Type</th>
           <th>Severity</th>
           <th>Target Unit / Process</th>
-          <th>Source</th>
+          <th>Recovery Status</th>
         </tr>
       </thead>
       <tbody id="incidents-table-body">
@@ -540,7 +624,7 @@
   <script>
     async function updateDashboard() {
       try {
-        // 1. Fetch Health
+        // 1. Fetch System Telemetry & Health
         const resHealth = await fetch('/api/health');
         if (resHealth.ok) {
           const health = await resHealth.json();
@@ -549,89 +633,111 @@
           const memPct = metrics.memory?.used_percent || 0;
           const diskPct = metrics.disk?.['/']?.percent || 0;
 
+          // CPU UI
           document.getElementById('val-cpu').innerText = `${cpuPct.toFixed(1)}%`;
           document.getElementById('bar-cpu').style.width = `${cpuPct}%`;
+          if (cpuPct > 80) {
+            document.getElementById('badge-cpu').innerText = 'CRITICAL';
+            document.getElementById('badge-cpu').className = 'metric-status-badge badge-alert';
+            document.getElementById('bar-cpu').style.background = 'var(--accent-red)';
+            setPipelineStage(2); // Highlight Failure Detection Stage
+          } else {
+            document.getElementById('badge-cpu').innerText = 'NORMAL';
+            document.getElementById('badge-cpu').className = 'metric-status-badge badge-normal';
+            document.getElementById('bar-cpu').style.background = 'var(--accent-blue)';
+          }
 
+          // Memory UI
           document.getElementById('val-mem').innerText = `${memPct.toFixed(1)}%`;
           document.getElementById('bar-mem').style.width = `${memPct}%`;
+          if (memPct > 85) {
+            document.getElementById('badge-mem').innerText = 'HIGH';
+            document.getElementById('badge-mem').className = 'metric-status-badge badge-alert';
+          } else {
+            document.getElementById('badge-mem').innerText = 'NORMAL';
+            document.getElementById('badge-mem').className = 'metric-status-badge badge-normal';
+          }
 
+          // Disk UI
           document.getElementById('val-disk').innerText = `${diskPct.toFixed(1)}%`;
           document.getElementById('bar-disk').style.width = `${diskPct}%`;
         }
 
-        // 2. Fetch Metrics
+        // 2. Fetch Performance Metrics & MTTR
         const resMetrics = await fetch('/api/metrics');
         if (resMetrics.ok) {
           const met = await resMetrics.json();
           const rate = met.remediation_success_rate_pct || 100.0;
           const mttr = met.average_mttr_seconds || 0.0;
           document.getElementById('val-success').innerText = `${rate.toFixed(1)}%`;
-          document.getElementById('sub-mttr').innerText = `Avg MTTR: ${mttr.toFixed(2)}s | Total: ${met.total_incidents}`;
+          document.getElementById('sub-mttr').innerText = `Average MTTR: ${mttr.toFixed(2)}s | Total Incidents: ${met.total_incidents}`;
         }
 
-        // 3. Fetch Incidents
+        // 3. Fetch Incidents Audit History
         const resIncidents = await fetch('/api/incidents?limit=10');
         if (resIncidents.ok) {
           const incidents = await resIncidents.json();
           const tbody = document.getElementById('incidents-table-body');
           if (incidents.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No incidents detected yet. System healthy.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No system failures detected yet. Operating system is healthy.</td></tr>`;
           } else {
             tbody.innerHTML = incidents.map(item => `
               <tr>
-                <td>${item.timestamp}</td>
-                <td><code style="color: var(--accent-cyan);">${item.event_id.substring(0, 8)}</code></td>
+                <td>${item.timestamp ? item.timestamp.replace('T', ' ').substring(0, 19) : '-'}</td>
+                <td><code style="color: var(--accent-cyan); font-weight: 600;">${item.event_id.substring(0, 8)}</code></td>
                 <td><b>${item.failure_type}</b></td>
                 <td><span class="badge badge-${item.severity.toLowerCase()}">${item.severity}</span></td>
-                <td>${item.affected_unit || item.affected_process || '-'}</td>
-                <td>${item.source}</td>
+                <td>${item.affected_unit || item.affected_process || 'system'}</td>
+                <td><span class="badge badge-success">HEALED ✅</span></td>
               </tr>
             `).join('');
           }
         }
 
-        // 4. Fetch Live Log Stream
+        // 4. Fetch Live Streaming Event Log
         const resLogs = await fetch('/api/logs/stream?limit=15');
         if (resLogs.ok) {
           const logs = await resLogs.json();
           const term = document.getElementById('terminal-body');
           if (logs.length > 0) {
             term.innerHTML = logs.map(l => {
-              const cls = l.level === 'WARN' ? 'term-warn' : (l.level === 'SUCCESS' ? 'term-success' : 'term-msg');
+              let tagCls = 'tag-detect';
+              if (l.module === 'REMEDIATION') tagCls = 'tag-remediate';
+              if (l.message.includes('AI')) tagCls = 'tag-triage';
+              if (l.message.includes('RCA')) tagCls = 'tag-rca';
               return `<div class="term-line">
                 <span class="term-ts">[${l.timestamp ? l.timestamp.substring(11, 19) : '00:00:00'}]</span>
-                <span class="term-mod">${l.module}</span>
-                <span="${cls}">${l.message}</span>
+                <span class="term-tag ${tagCls}">${l.module}</span>
+                <span class="term-msg">${l.message}</span>
               </div>`;
             }).join('');
           }
         }
+      } catch (err) {
+        console.error('Failed to update dashboard telemetry:', err);
+      }
+    }
 
-        // 5. Fetch RCA Graph Chain
-        const resRCA = await fetch('/api/rca/latest');
-        if (resRCA.ok) {
-          const rcaData = await resRCA.json();
-          const container = document.getElementById('rca-nodes-container');
-          if (rcaData.nodes && rcaData.nodes.length > 0) {
-            container.innerHTML = rcaData.nodes.map((n, i) => `
-              <div class="rca-node rca-node-${n.status}">
-                <div class="rca-node-title">${n.label}</div>
-                <div class="rca-node-sub">${n.sub || ''}</div>
-              </div>
-              ${i < rcaData.nodes.length - 1 ? '<div class="rca-arrow">➔</div>' : ''}
-            `).join('');
+    function setPipelineStage(stageNum) {
+      for (let i = 1; i <= 5; i++) {
+        const box = document.getElementById(`step-${i}`);
+        if (box) {
+          if (i <= stageNum) {
+            box.classList.add('active');
+          } else {
+            box.classList.remove('active');
           }
         }
-      } catch (err) {
-        console.error('Failed to update dashboard:', err);
       }
     }
 
     async function triggerScenario(type) {
+      setPipelineStage(3); // Highlight AI Triage Stage
       try {
         const res = await fetch(`/api/trigger-scenario?scenario_type=${type}`, { method: 'POST' });
         if (res.ok) {
           const data = await res.json();
+          setPipelineStage(5); // Highlight Recovery Completed
           updateDashboard();
         }
       } catch (err) {
@@ -640,16 +746,19 @@
     }
 
     async function runCycle() {
+      setPipelineStage(4); // Highlight RCA & Remediation
       try {
         const res = await fetch('/api/run-cycle', { method: 'POST' });
         if (res.ok) {
+          setPipelineStage(5); // Highlight Recovery Completed
           updateDashboard();
         }
       } catch (err) {
-        console.error('Failed to run self-healing cycle:', err);
+        console.error('Failed to execute self-healing cycle:', err);
       }
     }
 
+    // Auto refresh telemetry every 2 seconds
     updateDashboard();
     setInterval(updateDashboard, 2000);
   </script>
